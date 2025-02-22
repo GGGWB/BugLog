@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>我的上传 {% if role == 'admin' %}(管理员视图 - 所有用户文件){% endif %}</h2>
+    {% for category, posts in categorized_posts.items() %}
+        <h3>{{ category }}</h3>
+        <p>帖子数量: {{ posts|length }}</p>
+        <ul>
+            {% for post in posts %}
+                <li>
+                    {% if role == 'admin' %}
+                        {{ post.username }}: 
+                    {% endif %}
+                    {{ post.title }} (<a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.filename }}</a>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,16 @@
+<form method="POST" enctype="multipart/form-data">
+    <label>标题:</label><br>
+    <input type="text" name="title" required><br>
+    <label>类别:</label><br>
+    <select name="category" required>
+        <option value="技术">技术</option>
+        <option value="生活">生活</option>
+        <option value="学习">学习</option>
+        <option value="其他">其他</option>
+    </select><br>
+    <label>上传 Markdown 文件:</label><br>
+    <input type="file" name="md_file" accept=".md" required><br>
+    <label>上传图片 (可多选):</label><br>
+    <input type="file" name="images" multiple><br>
+    <button type="submit">上传</button>
+</form>
