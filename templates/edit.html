@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="main-content" style="width: 66.67%;">
+        <h2>编辑帖子</h2>
+        <form method="POST">
+            <label>标题:</label><br>
+            <input type="text" name="title" value="{{ post.title }}" required><br>
+            <label>类别:</label><br>
+            <input type="text" name="category" value="{{ post.category }}" required><br>
+            <label>内容 (Markdown):</label><br>
+            <textarea name="content" rows="10" cols="50" required>{{ post.content }}</textarea><br>
+            <button type="submit">保存</button>
+            <a href="{{ url_for('dashboard') }}" class="btn-edit" style="font-size: 0.9em;">取消</a>
+        </form>
+    </div>
+{% endblock %}

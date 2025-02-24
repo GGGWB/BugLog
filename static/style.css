@@ -1,53 +1,175 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-}
-
-nav {
-    margin-bottom: 20px;
+    margin: 0; /* 移除默认 margin */
+    padding: 0; /* 移除默认 padding */
+    background-color: #f5f5f5;
+    color: #333;
+    overflow-x: hidden; /* 防止水平滚动 */
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
+    width: 100vw; /* 使用视口宽度，确保不超过屏幕 */
+    max-width: 100%; /* 防止溢出 */
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+    min-height: 100vh; /* 确保填满视口高度 */
+    box-sizing: border-box; /* 包含 padding 在宽度内 */
 }
 
-.flash {
-    color: green;
-    font-weight: bold;
+.sidebar-left, .sidebar-right {
+    flex: 1;
+    min-width: 0; /* 防止内容溢出 */
+    max-width: 20%; /* 限制侧边栏最大宽度 */
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky; /* 固定侧边栏 */
+    top: 20px; /* 距离顶部 20px */
+    height: calc(100vh - 40px); /* 高度自适应，减去 padding 和顶部间距 */
+    overflow-y: auto; /* 允许侧边栏垂直滚动 */
+    box-sizing: border-box; /* 包含 padding 在宽度内 */
 }
 
-.post {
-    border: 1px solid #ddd;
+.main-content {
+    flex: 4;
+    min-width: 0; /* 防止内容溢出 */
+    max-width: 60%; /* 限制主内容最大宽度 */
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow-y: auto; /* 允许垂直滚动 */
+    max-height: 100vh; /* 限制高度，防止溢出 */
+    box-sizing: border-box; /* 包含 padding 在宽度内 */
+}
+
+.user-profile img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.post-card {
+    margin: 10px 0;
     padding: 10px;
-    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
 }
 
-input, textarea, select {
-    margin-bottom: 10px;
-    width: 100%;
-    max-width: 400px;
-}
-
-button {
+.btn-edit, .btn-delete {
     padding: 5px 10px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
+    margin-right: 5px;
+    border-radius: 3px;
+    text-decoration: none;
+    color: #fff;
     cursor: pointer;
+    font-size: 0.9em; /* 缩小按钮字体 */
 }
 
-button:hover {
-    background-color: #0056b3;
+.btn-edit {
+    background-color: #4CAF50; /* 绿色编辑按钮 */
+}
+
+.btn-delete {
+    background-color: #f44336; /* 红色删除按钮 */
+}
+
+.logout-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 5px 15px;
+    background-color: #2196F3;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    z-index: 1000; /* 确保按钮在内容之上 */
+}
+
+/* 模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 1000;
+    width: 300px;
+}
+
+/* Post 页面样式 */
+.post-container {
+    width: 100vw; /* 使用视口宽度，确保不超过屏幕 */
+    max-width: 100%; /* 防止溢出 */
+    margin: 0;
+    padding: 0; /* 移除内联 padding，避免重复 */
+    display: flex;
+    gap: 20px;
+    min-height: 100vh; /* 确保填满视口高度 */
+    box-sizing: border-box; /* 包含 padding 在宽度内 */
 }
 
 .markdown-content {
-    line-height: 1.6;
-    margin-top: 20px;
+    font-size: 1.1em;
+    line-height: 1.5;
+    max-width: 700px; /* 调整为流行博客的合理宽度 */
+    margin: 0 auto;
 }
 
 .markdown-content img {
-    max-width: 100%;
-    height: auto;
+    max-width: 100%; /* 图片宽度限制为容器宽度 */
+    height: auto; /* 保持纵横比 */
+    display: block; /* 确保图片块级元素 */
+    margin: 10px auto; /* 图片居中 */
+}
+.markdown-content p {
+    text-align: justify; /* 段落两端对齐 */
+    margin-bottom: 15px; /* 段落间距 */
+}
+.markdown-content h1, .markdown-content h2, .markdown-content h3, .markdown-content h4, .markdown-content h5, .markdown-content h6 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.markdown-content pre, .markdown-content code {
+    background-color: #f8f8f8; /* 代码块背景色 */
+    padding: 10px; /* 代码块内边距 */
+    border-radius: 5px; /* 代码块圆角 */
+    overflow-x: auto; /* 横向滚动 */
+}
+.markdown-content ul, .markdown-content ol {
+    padding-left: 20px; /* 列表缩进 */
+    margin-bottom: 15px; /* 列表间距 */
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    .post-container {
+        flex-direction: column;
+    }
+    .sidebar-left, .main-content, .sidebar-right {
+        width: 100%;
+        margin-bottom: 20px;
+        position: static; /* 移除 sticky，在小屏幕上恢复默认位置 */
+        height: auto; /* 恢复默认高度 */
+        overflow-y: visible; /* 移除滚动 */
+        max-width: 100%; /* 确保不超过视口 */
+    }
+    .logout-btn {
+        position: fixed; /* 在小屏幕上固定在顶部右侧 */
+        top: 10px;
+        right: 10px;
+    }
 }

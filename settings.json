@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": ["."],
+    "jinja2.templates": ["templates/**/*.html"],
+    "flask.app": "app.py"
+}

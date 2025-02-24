@@ -8,22 +8,13 @@
 <body>
     <nav>
         {% if 'user_id' in session %}
-            <a href="{{ url_for('dashboard') }}">仪表盘</a> |
-            <a href="{{ url_for('upload') }}">上传</a> |
-            <a href="{{ url_for('logout') }}">退出</a>
+            <button class="logout-btn" onclick="window.location.href='{{ url_for('logout') }}'">退出</button>
         {% else %}
             <a href="{{ url_for('login') }}">登录</a> |
             <a href="{{ url_for('register') }}">注册</a>
         {% endif %}
     </nav>
     <div class="container">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <p class="flash">{{ message }}</p>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
         {% block content %}{% endblock %}
     </div>
 </body>

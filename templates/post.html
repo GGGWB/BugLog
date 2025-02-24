@@ -1,8 +1,43 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>{{ title }}</h2>
-    <div class="markdown-content">
-        {{ content | safe }}
+    <div class="post-container">
+        <div class="sidebar-left">
+            <h3>同类别文章</h3>
+            <ul style="list-style: none; padding: 0;">
+                {% if related_posts %}
+                    {% for post_id, title, created_at in related_posts %}
+                        <li style="margin: 10px 0;">
+                            <a href="{{ url_for('view_post', post_id=post_id) }}" style="color: #2196F3; text-decoration: none;">{{ title }}</a>
+                            <small style="color: #666;">（{{ created_at.strftime('%Y-%m-%d') if created_at else '未知时间' }}）</small>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li style="margin: 10px 0; color: #666;">暂无同类别文章</li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="main-content">
+            <h1 style="text-align: center;">{{ title }}</h1>
+            <div class="markdown-content">
+                {{ content | safe }}
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="{{ url_for('dashboard') }}" class="btn-edit">返回仪表盘</a>
+            </div>
+        </div>
+        <div class="sidebar-right">
+            <h3>文章大纲</h3>
+            <ul style="list-style: none; padding: 0;">
+                {% if toc %}
+                    {% for item in toc %}
+                        <li style="margin: 5px 0; padding-left: {{ (item.level - 1) * 20 }}px;">
+                            <a href="#{{ item.id }}" style="color: #2196F3; text-decoration: none;">{{ item.text }}</a>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li style="margin: 5px 0; color: #666;">暂无大纲</li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
-    <a href="{{ url_for('dashboard') }}">返回仪表盘</a>
 {% endblock %}

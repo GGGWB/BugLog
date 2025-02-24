@@ -1,18 +1,89 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>我的上传 {% if role == 'admin' %}(管理员视图 - 所有用户文件){% endif %}</h2>
-    {% for category, posts in categorized_posts.items() %}
-        <h3>{{ category }}</h3>
-        <p>帖子数量: {{ posts|length }}</p>
-        <ul>
-            {% for post in posts %}
-                <li>
-                    {% if role == 'admin' %}
-                        {{ post.username }}: 
-                    {% endif %}
-                    {{ post.title }} (<a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.filename }}</a>)
-                </li>
+    <div class="container" style="display: flex; flex-direction: row;">
+        <div class="sidebar-left">
+            <div class="user-profile">
+                <img src="{{ url_for('static', filename='avatars/' + (avatar if avatar else 'default_avatar.jpg')) }}" alt="User Avatar">
+                <h3>{{ username if username else '未知用户' }}</h3>
+                <p>{{ bio if bio else '请输入您的简介...' }}</p>
+                <p>上传文件数: {{ total_posts }}</p>
+                <p>类别数: {{ categories|length }}</p>
+            </div>
+        </div>
+        <div class="main-content">
+            <h2>我的上传 {% if role == 'admin' %}(管理员视图 - 所有用户文件){% endif %}</h2>
+            <a href="{{ url_for('upload') }}" class="btn-edit">上传新文件</a>
+            {% for category, posts in categorized_posts.items() %}
+                <h3>{{ category }}</h3>
+                <p>帖子数量: {{ posts|length }}</p>
+                <div class="post-cards">
+                    {% for post in posts %}
+                        <div class="post-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <a href="{{ url_for('view_post', post_id=post.id) }}" style="color: #2196F3; text-decoration: none; font-size: 1em;">{{ post.title }}</a>
+                                <div>
+                                    <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn-edit" style="font-size: 0.9em;">编辑</a>
+                                    <button class="btn-delete" onclick="showDeleteModal({{ post.id }})" style="font-size: 0.9em;">删除</button>
+                                </div>
+                            </div>
+                            {% if role == 'admin' %}
+                                <p style="font-size: 0.9em;"><strong>{{ post.username if post.username else '未知用户' }}:</strong></p>
+                            {% endif %}
+                            <p style="font-size: 0.9em;">(<a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.filename }}</a>)</p>
+                        </div>
+                    {% endfor %}
+                </div>
             {% endfor %}
-        </ul>
-    {% endfor %}
+        </div>
+        <div class="sidebar-right">
+            <h3>分类统计</h3>
+            <ul>
+                {% for cat, count in categories.items() %}
+                    <li>{{ cat }}: {{ count }} 篇</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- 模态框用于输入密码 -->
+        <div id="deleteModal" class="modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 1000;">
+            <h3>请输入密码以确认删除</h3>
+            <form id="deleteForm" method="POST" action="">
+                <input type="password" name="password" placeholder="输入密码" required style="padding: 5px; margin-right: 5px;">
+                <input type="hidden" name="post_id" id="modalPostId">
+                <button type="submit" class="btn-delete">确认删除</button>
+                <button type="button" onclick="hideDeleteModal()" class="btn-edit">取消</button>
+            </form>
+        </div>
+
+        <script>
+            function showDeleteModal(postId) {
+                document.getElementById('modalPostId').value = postId;
+                document.getElementById('deleteModal').style.display = 'block';
+            }
+
+            function hideDeleteModal() {
+                document.getElementById('deleteModal').style.display = 'none';
+            }
+
+            // 提交删除表单到 /delete/<post_id>
+            document.getElementById('deleteForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const postId = document.getElementById('modalPostId').value;
+                const formData = new FormData(this);
+                fetch('/delete/' + postId, {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json()).then(data => {
+                    if (data.success) {
+                        alert('帖子已删除');
+                        window.location.reload(); // 刷新页面
+                    } else {
+                        alert(data.message || '删除失败，请重试！');
+                    }
+                }).catch(error => {
+                    alert('删除失败，请重试！');
+                });
+            });
+        </script>
+    </div>
 {% endblock %}
