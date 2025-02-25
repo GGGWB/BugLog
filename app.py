@@ -424,13 +424,33 @@ def delete_post(post_id):
             os.remove(img_path)
             logger.debug(f"Deleted image: {img_path}")
     
+    # 检查并删除 image_dir（日期文件夹）是否为空
+    try:
+        if os.path.exists(image_dir) and not os.listdir(image_dir):  # 如果日期文件夹存在且为空
+            os.rmdir(image_dir)  # 删除空日期文件夹
+            logger.debug(f"Deleted empty directory: {image_dir}")
+    except OSError as e:
+        logger.error(f"Failed to delete directory {image_dir}: {e}")
+    
+    # 获取类别文件夹路径（image_dir 的父目录）
+    category_dir = os.path.dirname(image_dir)
+    
+    # 检查并删除类别文件夹是否为空
+    try:
+        if os.path.exists(category_dir) and not os.listdir(category_dir):  # 如果类别文件夹存在且为空
+            os.rmdir(category_dir)  # 删除空类别文件夹
+            logger.debug(f"Deleted empty category directory: {category_dir}")
+    except OSError as e:
+        logger.error(f"Failed to delete category directory {category_dir}: {e}")
+    
     # 删除数据库记录
     c.execute('DELETE FROM post_images WHERE post_id = ?', (post_id,))
     c.execute('DELETE FROM posts WHERE id = ?', (post_id,))
     conn.commit()
     conn.close()
     
-    return {'success': True, 'message': '帖子已删除'}, 200
+    return {'success': True, 'message': '帖子及相关目录已删除'}, 200
+
 
 @app.route('/logout')
 def logout():

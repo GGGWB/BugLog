@@ -1,13 +1,50 @@
-{% extends "base.html" %}
-{% block content %}
-    <div class="main-content" style="width: 66.67%;">
-        <h2>登录</h2>
-        <form method="POST">
-            <label>用户名:</label><br>
-            <input type="text" name="username" required><br>
-            <label>密码:</label><br>
-            <input type="password" name="password" required><br>
-            <button type="submit">登录</button>
-        </form>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>登录 - BugLog</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>登录 BugLog</h2>
+            <form method="POST" action="{{ url_for('login') }}" class="auth-form">
+                <div class="form-group">
+                    <label for="username">用户名：</label>
+                    <input type="text" id="username" name="username" required class="input-field">
+                </div>
+                <div class="form-group">
+                    <label for="password">密码：</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" required class="input-field">
+                        <button type="button" id="togglePassword" class="toggle-password">显示</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="remember" class="checkbox"> 记住我
+                    </label>
+                </div>
+                <button type="submit" class="btn-auth">登录</button>
+                <p class="auth-link">没有账户？<a href="{{ url_for('register') }}" class="auth-link-btn">注册</a></p>
+            </form>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="error-message">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
     </div>
-{% endblock %}
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const password = document.getElementById('password');
+            const type = password.type === 'password' ? 'text' : 'password';
+            password.type = type;
+            this.textContent = type === 'password' ? '显示' : '隐藏';
+        });
+    </script>
+</body>
+</html>

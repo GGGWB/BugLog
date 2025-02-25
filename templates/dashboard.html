@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="container" style="display: flex; flex-direction: row;">
+    <div class="container">
         <div class="sidebar-left">
             <div class="user-profile">
                 <img src="{{ url_for('static', filename='avatars/' + (avatar if avatar else 'default_avatar.jpg')) }}" alt="User Avatar">

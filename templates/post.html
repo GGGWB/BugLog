@@ -2,17 +2,23 @@
 {% block content %}
     <div class="post-container">
         <div class="sidebar-left">
+            <!-- 用户头像和返回首页按钮 -->
+            <div class="user-profile">
+                <img src="{{ url_for('static', filename='avatars/' + (session['avatar'] if session['avatar'] else 'default_avatar.jpg')) }}" alt="User Avatar">
+                <a href="{{ url_for('dashboard') }}" class="btn-edit" style="display: block; margin-top: 10px;">返回首页</a>
+            </div>
+
             <h3>同类别文章</h3>
             <ul style="list-style: none; padding: 0;">
                 {% if related_posts %}
                     {% for post_id, title, created_at in related_posts %}
                         <li style="margin: 10px 0;">
-                            <a href="{{ url_for('view_post', post_id=post_id) }}" style="color: #2196F3; text-decoration: none;">{{ title }}</a>
-                            <small style="color: #666;">（{{ created_at.strftime('%Y-%m-%d') if created_at else '未知时间' }}）</small>
+                            <a href="{{ url_for('view_post', post_id=post_id) }}" style="text-decoration: none;">{{ title }}</a>
+                            <small>（{{ created_at.strftime('%Y-%m-%d') if created_at else '未知时间' }}）</small>
                         </li>
                     {% endfor %}
                 {% else %}
-                    <li style="margin: 10px 0; color: #666;">暂无同类别文章</li>
+                    <li style="margin: 10px 0;">暂无同类别文章</li>
                 {% endif %}
             </ul>
         </div>
@@ -22,7 +28,7 @@
                 {{ content | safe }}
             </div>
             <div style="text-align: center; margin-top: 20px;">
-                <a href="{{ url_for('dashboard') }}" class="btn-edit">返回仪表盘</a>
+                <a href="{{ url_for('dashboard') }}" class="btn-edit">返回首页</a>
             </div>
         </div>
         <div class="sidebar-right">
@@ -31,13 +37,66 @@
                 {% if toc %}
                     {% for item in toc %}
                         <li style="margin: 5px 0; padding-left: {{ (item.level - 1) * 20 }}px;">
-                            <a href="#{{ item.id }}" style="color: #2196F3; text-decoration: none;">{{ item.text }}</a>
+                            <a href="#{{ item.id }}" class="toc-link" style="color: #2196F3; text-decoration: none;">{{ item.text }}</a>
                         </li>
                     {% endfor %}
                 {% else %}
-                    <li style="margin: 5px 0; color: #666;">暂无大纲</li>
+                    <li style="margin: 5px 0;">暂无大纲</li>
                 {% endif %}
             </ul>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const headers = document.querySelectorAll('.markdown-content h1, .markdown-content h2, .markdown-content h3, .markdown-content h4, .markdown-content h5, .markdown-content h6');
+
+            console.log('Found TOC Links:', tocLinks); // 调试：检查是否找到大纲链接
+            console.log('Found Headers:', headers); // 调试：检查是否找到标题
+
+            // 平滑滚动
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    console.log('Clicked Link, Target ID:', targetId); // 调试：检查点击的 ID
+                    const targetElement = document.getElementById(targetId);
+                    console.log('Target Element:', targetElement); // 调试：检查目标元素
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    } else {
+                        console.error('Target element not found for ID:', targetId); // 调试：如果未找到目标
+                    }
+                });
+            });
+
+            // 高亮当前可见标题
+            function highlightActiveToc() {
+                let currentHeader = null;
+                headers.forEach(header => {
+                    const rect = header.getBoundingClientRect();
+                    if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
+                        currentHeader = header;
+                    }
+                });
+
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (currentHeader && link.getAttribute('href') === `#${currentHeader.id}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            // 监听滚动事件
+            window.addEventListener('scroll', highlightActiveToc);
+            highlightActiveToc(); // 初始高亮
+        });
+    </script>
 {% endblock %}

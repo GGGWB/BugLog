@@ -1,17 +1,44 @@
-{% extends "base.html" %}
-{% block content %}
-    <div class="main-content" style="width: 66.67%;">
-        <h2>上传文件</h2>
-        <form method="POST" enctype="multipart/form-data">
-            <label>标题:</label><br>
-            <input type="text" name="title" required><br>
-            <label>类别:</label><br>
-            <input type="text" name="category" required><br>
-            <label>Markdown 文件:</label><br>
-            <input type="file" name="md_file" accept=".md" required><br>
-            <label>图片文件 (可选):</label><br>
-            <input type="file" name="images" multiple accept="image/*"><br>
-            <button type="submit">上传</button>
-        </form>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>上传 - BugLog</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>上传文件</h2>
+            <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data" class="auth-form">
+                <div class="form-group">
+                    <label for="title">标题：</label>
+                    <input type="text" id="title" name="title" required class="input-field">
+                </div>
+                <div class="form-group">
+                    <label for="category">类别：</label>
+                    <input type="text" id="category" name="category" required class="input-field">
+                </div>
+                <div class="form-group">
+                    <label for="md_file">Markdown 文件：</label>
+                    <input type="file" id="md_file" name="md_file" accept=".md" required class="input-file">
+                </div>
+                <div class="form-group">
+                    <label for="images">图片文件（可选，多个）：</label>
+                    <input type="file" id="images" name="images" multiple accept="image/*" class="input-file">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn-auth">上传</button>
+                    <a href="{{ url_for('dashboard') }}" class="btn-auth" style="background-color: #45a049;">返回</a>
+                </div>
+            </form>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="error-message">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
     </div>
-{% endblock %}
+</body>
+</html>
